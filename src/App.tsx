@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, ReactNode } from 'react'
+import { AppContainer } from './styles'
+import { AddNewItem } from './AddNewItem'
+import { Column } from './Column'
+import { Card } from './Card'
+import { useAppState } from './state/AppStateContext'
 
-function App() {
+export const App: FC = () => {
+
+  const {lists} = useAppState()
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+    <AppContainer>
+      
+      {/*
+      <Column text="To Do">
+        <Card text="Generate app scaffold" />{' '}
+      </Column>
+      <Column text="In Progress">
+        <Card text="Learn Typescript" />{' '}
+      </Column>
+      <Column text="Done">
+        <Card text="Begin to use static typing" />
+      </Column>
+    */}
+      {lists.map((list)=> (
+        <Column text={list.text} key={list.id} id={list.id}/>
+      ))}
+      <AddNewItem toggleButtonText="+ Add another list" onAdd={console.log} />
+    </AppContainer>
+  )}
