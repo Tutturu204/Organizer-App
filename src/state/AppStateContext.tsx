@@ -1,6 +1,6 @@
 import { createContext, useReducer, Dispatch, useContext, FC, ReactNode } from 'react'
 import { List, Task, AppState, appStateReducer } from './AppStateReducer'
-
+import { useImmerReducer } from 'use-immer'
 import { Action } from './actions'
 
 
@@ -40,7 +40,7 @@ const appData: AppState = {
 }
 
 export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [state, dispatch] = useReducer(appStateReducer,appData)
+    const [state, dispatch] = useImmerReducer(appStateReducer, appData)
 
   const { lists } = appData
   const getTasksByListId = (id: string) => {

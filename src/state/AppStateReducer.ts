@@ -1,5 +1,6 @@
 import { Action } from "./actions";
 import { nanoid } from "nanoid"
+import { findItemIndexById } from "../utils/arrayUtils";
 
 export type Task = {
     id: string
@@ -16,18 +17,32 @@ export type AppState = {
     lists: List[]
   }
 
-export const appStateReducer = (state: AppState, action: Action) : AppState => {
+export const appStateReducer = (draft: AppState, action: Action) : AppState | void => {
     switch (action.type) {
+        
         case "ADD_LIST": {
-            return {
-                ...state,
-                lists: [
-                    ...state.lists,
-                    {id: nanoid(),text: action.payload, tasks: []}
-                ]
-        }}
+            console.log()
+            draft.lists.push({
+                    id: nanoid(),
+                    text: action.payload,
+                    tasks: []})
+        console.log(draft.lists)
+        break
+    }
+        case "ADD_TASK": {
+            const {text, listId} = action.payload
+            const targetListindex = findItemIndexById(draft.lists, listId)
+            //console.log(draft.lists[targetListindex].tasks[0].text)
+            draft.lists[targetListindex].tasks.push({
+                id: nanoid(),
+                text
+            })
+            //console.log("After the push")
+            //console.log(draft.lists[targetListindex].tasks[1].text)
+            break
+        }
         default: {
-            return state
+            break
         }
     }
 }
