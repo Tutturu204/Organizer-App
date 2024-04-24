@@ -1,6 +1,7 @@
 import { Action } from "./actions";
 import { nanoid } from "nanoid"
-import { findItemIndexById } from "../utils/arrayUtils";
+import { findItemIndexById, moveItem } from "../utils/arrayUtils";
+import { DragItem } from "../DragItem";
 
 export type Task = {
     id: string
@@ -15,34 +16,66 @@ export type List = {
   
 export type AppState = {
     lists: List[]
+    draggedItem: DragItem | null
   }
 
-export const appStateReducer = (draft: AppState, action: Action) : AppState | void => {
+export const appStateReducer = (state: AppState, action: Action) : AppState => {
     switch (action.type) {
         
         case "ADD_LIST": {
-            console.log()
-            draft.lists.push({
-                    id: nanoid(),
-                    text: action.payload,
-                    tasks: []})
-        console.log(draft.lists)
-        break
-    }
+            return {
+                ...state, 
+                lists: [
+                    ...state.lists,
+                    {id: nanoid(), text: action.payload, tasks: []}
+                ]
+
+            }
+           
+        }
         case "ADD_TASK": {
-            const {text, listId} = action.payload
-            const targetListindex = findItemIndexById(draft.lists, listId)
-            //console.log(draft.lists[targetListindex].tasks[0].text)
-            draft.lists[targetListindex].tasks.push({
-                id: nanoid(),
-                text
-            })
-            //console.log("After the push")
-            //console.log(draft.lists[targetListindex].tasks[1].text)
-            break
+            //find a list to add a task
+            const index_of_the_list = findItemIndexById(state.lists, action.payload.listId)
+            const updatedLists = [...state.lists]
+            const updatedList = {...state.lists[index_of_the_list]}
+            
+            if (index_of_the_list !== -1) {
+                updatedList.tasks = [
+                    ...updatedList.tasks,
+                    { id: nanoid(), text: action.payload.text }
+                ]
+                updatedLists[index_of_the_list] = updatedList
+                
+            }
+            return  {
+                ...state,
+                lists: updatedLists
+            } 
+            
+        }
+
+        case "MOVE_LIST" : {
+            const {dragged_id, hover_id} = action.payload
+            const draggedIndex = findItemIndexById(state.lists, dragged_id)
+            const hoverIndex = findItemIndexById(state.lists, hover_id)
+            const updatedLists = moveItem([...state.lists], draggedIndex, hoverIndex);
+
+            return {
+                ...state,
+                lists: updatedLists
+            }
+        }
+
+        case "SET_DRAGGED_ITEM": { 
+            return {
+                ...state,
+                "draggedItem": action.payload
+            }
+            
+             
         }
         default: {
-            break
+            return state
         }
     }
 }

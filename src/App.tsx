@@ -5,7 +5,7 @@ import { Column } from './Column'
 import { useAppState } from './state/AppStateContext'
 import { addList } from './state/actions'
 
-export const App: FC = () => {
+export const App = () => {
   const {lists, dispatch} = useAppState()
 
   return (

@@ -2,13 +2,16 @@ import { createContext, useReducer, Dispatch, useContext, FC, ReactNode } from '
 import { List, Task, AppState, appStateReducer } from './AppStateReducer'
 import { useImmerReducer } from 'use-immer'
 import { Action } from './actions'
+import { DragItem } from '../DragItem'
 
 
 type AppStateContextProbs = {
+  draggedItem: DragItem | null,
   lists: List[]
   getTasksByListId(id: string): Task[]
   dispatch: Dispatch<Action>
 }
+
 //create context fofr the applciation
 const AppStateContext = createContext<AppStateContextProbs>(
   {} as AppStateContextProbs,
@@ -20,6 +23,7 @@ export const useAppState = () => {
 }
 
 const appData: AppState = {
+  draggedItem: null,
   lists: [
     {
       id: '0',
@@ -40,14 +44,14 @@ const appData: AppState = {
 }
 
 export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [state, dispatch] = useImmerReducer(appStateReducer, appData)
+  const [state, dispatch] = useReducer(appStateReducer, appData)
 
-  const { lists } = appData
+  const { draggedItem, lists } = state
   const getTasksByListId = (id: string) => {
     return lists.find(list => list.id === id)?.tasks || []
   }
   return (
-    <AppStateContext.Provider value={{ lists, getTasksByListId, dispatch }}>
+    <AppStateContext.Provider value={{ draggedItem, lists, getTasksByListId, dispatch }}>
       {children}
     </AppStateContext.Provider>
   )
