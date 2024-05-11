@@ -1,6 +1,5 @@
 import { createContext, useReducer, Dispatch, useContext, FC, ReactNode } from 'react'
 import { List, Task, AppState, appStateReducer } from './AppStateReducer'
-import { useImmerReducer } from 'use-immer'
 import { Action } from './actions'
 import { DragItem } from '../DragItem'
 
